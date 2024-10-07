@@ -16,9 +16,19 @@ function click_quack() {
   // const audio = new Audio("quack.mp3");
 }
 
-function quack_interval(){
-    quackCounter++;
-    divtext.innerHTML = `Quack! ${quackCounter} quacks.`;
+// DEPRECATED. Use framebasedIncrement instead.
+// function quack_interval() {
+//   quackCounter++;
+//   divtext.innerHTML = `Quack! ${quackCounter} quacks.`;
+// }
+
+function framebasedIncrement(timestamp: number) {
+  const deltaTime = timestamp - (lastTime ?? timestamp);
+  lastTime = timestamp;
+
+  quackCounter += deltaTime / 1000;
+  divtext.innerHTML = `Quack! ${quackCounter} quacks.`;
+  requestAnimationFrame(framebasedIncrement);
 }
 
 const divtext = document.createElement("div");
@@ -32,4 +42,7 @@ button.innerHTML = "🦆";
 button.addEventListener("click", click_quack);
 app.append(button);
 
-setInterval(quack_interval, 1000);
+// DEPRECATED. Use framebasedIncrement instead.
+// setInterval(quack_interval, 1000);
+let lastTime : number;
+requestAnimationFrame(framebasedIncrement);
