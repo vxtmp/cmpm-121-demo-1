@@ -3,11 +3,21 @@ import "./style.css";
 const app: HTMLDivElement = document.querySelector("#app")!;
 
 const gameName = "Super awesome amazing awesome game of awesomeness";
-document.title = gameName;
-
 const header = document.createElement("h1");
+const divtext = document.createElement("div");
+const button = document.createElement("button");
+let quackCounter: number = 0;
+let lastTime: number;
+
+document.title = gameName;
 header.innerHTML = gameName;
 app.append(header);
+
+divtext.innerHTML = "Click the duck!";
+app.append(divtext);
+button.innerHTML = "🦆";
+button.addEventListener("click", click_quack);
+app.append(button);
 
 function click_quack() {
   quackCounter++;
@@ -31,18 +41,7 @@ function framebasedIncrement(timestamp: number) {
   requestAnimationFrame(framebasedIncrement);
 }
 
-const divtext = document.createElement("div");
-divtext.innerHTML = "Click the duck!";
-app.append(divtext);
-
-let quackCounter: number = 0;
-
-const button = document.createElement("button");
-button.innerHTML = "🦆";
-button.addEventListener("click", click_quack);
-app.append(button);
 
 // DEPRECATED. Use framebasedIncrement instead.
 // setInterval(quack_interval, 1000);
-let lastTime : number;
 requestAnimationFrame(framebasedIncrement);
