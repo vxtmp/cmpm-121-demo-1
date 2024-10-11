@@ -60,7 +60,7 @@ app.append(buyLv3QuackerButton);
 app.append(lv3text);
 
 // sound effect quack
-const audio = new Audio("quack.mp3");
+// const audio = new Audio("quack.mp3"); Couldn't get it to work :(
 
 function update_status() {
   // truncate quackCounter to a whole integer
@@ -78,8 +78,6 @@ function click_quack() {
   quackCounter++;
   //   divtext.innerHTML = `Quack! ${quackCounter} quacks.
   update_status();
-  // play quack sound once
-  audio.play();
 }
 
 function buy_one_quacker() {
