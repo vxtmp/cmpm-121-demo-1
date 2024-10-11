@@ -2,7 +2,7 @@ import "./style.css";
 
 // GLOBALS.
 const app: HTMLDivElement = document.querySelector("#app")!;
-const gameName = "Super awesome amazing awesome game of awesomeness";
+const gameName = "Ducky Clicker";
 const header = document.createElement("h1");
 const divtext = document.createElement("div"); // Current quacks.
 const lv1text = document.createElement("div"); // Current lv1 quackers.
@@ -20,6 +20,7 @@ const LV3_INCREMENT = 50.0;
 let lv1_price = 10;
 let lv2_price = 100;
 let lv3_price = 1000;
+
 const PRICE_INCREMENT = 1.15;
 let quackCounter: number = 0;
 let lv1Counter: number = 0;
@@ -34,7 +35,7 @@ header.innerHTML = gameName;
 app.append(header);
 divtext.innerHTML = "Click the duck!"; // Prompt and quack counter.
 app.append(divtext);
-// append a new line using typescript
+
 app.append(document.createElement("br"));
 button.innerHTML = "🦆";
 button.addEventListener("click", click_quack);
@@ -58,6 +59,9 @@ buyLv3QuackerButton.addEventListener("click", buy_three_quacker);
 app.append(buyLv3QuackerButton);
 app.append(lv3text);
 
+// sound effect quack
+const audio = new Audio("quack.mp3");
+
 function update_status() {
   // truncate quackCounter to a whole integer
   const rounded_down_quacks = Math.floor(quackCounter);
@@ -68,15 +72,14 @@ function update_status() {
   buyLv1QuackerButton.innerHTML = `Buy AutoQuacker: ${lv1_price} quacks`;
   buyLv2QuackerButton.innerHTML = `Buy Lv2 AutoQuacker: ${lv2_price} quacks`;
   buyLv3QuackerButton.innerHTML = `Buy Lv3 AutoQuacker: ${lv3_price} quacks`;
-
 }
 
 function click_quack() {
   quackCounter++;
   //   divtext.innerHTML = `Quack! ${quackCounter} quacks.
   update_status();
-  // sound effect quack
-  // const audio = new Audio("quack.mp3");
+  // play quack sound once
+  audio.play();
 }
 
 function buy_one_quacker() {
