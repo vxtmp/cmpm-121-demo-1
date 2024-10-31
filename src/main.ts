@@ -1,6 +1,5 @@
 import "./style.css";
 
-
 // import quackSound from "./quack.mp3";
 
 // GLOBALS.
@@ -11,7 +10,7 @@ const divText = document.createElement("div"); // Current quacks.
 const quacksPS = document.createElement("div"); // Quacks per second.
 quacksPS.innerHTML = "Quacks per second: 0";
 // const leftcontainer = document.createElement("div");
-const quackAudio = new Audio('./quack.mp3');
+const quackAudio = new Audio("./quack.mp3");
 
 interface Item {
   name: string;
@@ -99,6 +98,7 @@ function buyItem(item: Item) {
     item.price *= PRICE_INCREMENT;
     // update_status();
     ui_manager.updateItemStatus();
+    ui_manager.updateQuacksPerSecond();
   }
 }
 
@@ -118,7 +118,11 @@ class UIManager {
   private quacksPS: HTMLDivElement;
   private items: Item[];
 
-  constructor(divText: HTMLDivElement, quacksPS: HTMLDivElement, items: Item[]) {
+  constructor(
+    divText: HTMLDivElement,
+    quacksPS: HTMLDivElement,
+    items: Item[],
+  ) {
     this.divText = divText;
     this.quacksPS = quacksPS;
     this.items = items;
@@ -135,8 +139,9 @@ class UIManager {
     }
   }
 
-  updateQuacksPerSecond(increment: number) {
-    this.quacksPS.innerHTML = `Quacks per second: ${increment.toFixed(2)}`;
+  updateQuacksPerSecond() {
+    const inc = calculateIncrement();
+    this.quacksPS.innerHTML = `Quacks per second: ${inc.toFixed(2)}`;
   }
 }
 const ui_manager = new UIManager(divText, quacksPS, availableItems);
@@ -168,22 +173,30 @@ function click_quack() {
 //   app.append(description);
 // });
 
-function framebasedIncrement(timestamp: number) {
+function frameBasedIncrement(timestamp: number) {
+  const deltaSeconds = calculateDeltaSeconds(timestamp);
+  const increment = calculateIncrement();
+  updateQuackCounter(increment, deltaSeconds);
+  requestAnimationFrame(frameBasedIncrement);
+}
+
+function calculateDeltaSeconds(timestamp: number): number {
   const deltaSeconds = (timestamp - (lastTime ?? timestamp)) / 1000;
   lastTime = timestamp;
-  // quackCounter += auto_quacker_coefficient * deltaSeconds;
+  return deltaSeconds;
+}
+
+function calculateIncrement(): number {
   let increment = 0;
   for (const item of availableItems) {
     increment += item.count * item.increment;
   }
-  // lv1Counter * LV1_INCREMENT +
-  // lv2Counter * LV2_INCREMENT +
-  // lv3Counter * LV3_INCREMENT;
-  quackCounter += increment * deltaSeconds;
-
-  // update_status();
-  ui_manager.updateQuackCount(quackCounter);
-  requestAnimationFrame(framebasedIncrement);
+  return increment;
 }
 
-requestAnimationFrame(framebasedIncrement);
+function updateQuackCounter(increment: number, deltaSeconds: number) {
+  quackCounter += increment * deltaSeconds;
+  ui_manager.updateQuackCount(quackCounter);
+}
+
+requestAnimationFrame(frameBasedIncrement);
