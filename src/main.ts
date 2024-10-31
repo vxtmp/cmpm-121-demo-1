@@ -88,7 +88,7 @@ app.append(quacksPS);
 
 app.append(document.createElement("br"));
 button.innerHTML = "🦆";
-button.addEventListener("click", click_quack);
+button.addEventListener("click", manualQuackerClicked);
 app.append(button);
 
 function buyItem(item: Item) {
@@ -114,22 +114,22 @@ for (const item of availableItems) {
   app.append(item.div);
 }
 class UIManager {
-  private divText: HTMLDivElement;
-  private quacksPS: HTMLDivElement;
+  private quackCountDivText: HTMLDivElement;
+  private quacksPerSecond: HTMLDivElement;
   private items: Item[];
 
   constructor(
-    divText: HTMLDivElement,
+    quackCountDivText: HTMLDivElement,
     quacksPS: HTMLDivElement,
     items: Item[],
   ) {
-    this.divText = divText;
-    this.quacksPS = quacksPS;
+    this.quackCountDivText = quackCountDivText;
+    this.quacksPerSecond = quacksPS;
     this.items = items;
   }
 
   updateQuackCount(count: number) {
-    this.divText.innerHTML = `Quack! ${Math.floor(count)} quacks.`;
+    this.quackCountDivText.innerHTML = `Quack! ${Math.floor(count)} quacks.`;
   }
 
   updateItemStatus() {
@@ -141,37 +141,16 @@ class UIManager {
 
   updateQuacksPerSecond() {
     const inc = calculateIncrement();
-    this.quacksPS.innerHTML = `Quacks per second: ${inc.toFixed(2)}`;
+    this.quacksPerSecond.innerHTML = `Quacks per second: ${inc.toFixed(2)}`;
   }
 }
 const ui_manager = new UIManager(divText, quacksPS, availableItems);
-// function update_status() {
-//   // truncate quackCounter to a whole integer
-//   const rounded_down_quacks = Math.floor(quackCounter);
-//   divText.innerHTML = `Quack! ${rounded_down_quacks} quacks.`;
-//   for (const item of availableItems) {
-//     item.div.innerHTML = `${item.name}s owned: ${item.count}`;
-//     item.button.innerHTML = `Buy ${item.name}: ${item.price} quacks`;
-//   }
-//   let increment = 0;
-//   for (const item of availableItems) {
-//     increment += item.count * item.increment;
-//   }
-//   quacksPS.innerHTML = `Quacks per second: ${increment.toFixed(2)}`;
-// }
-function click_quack() {
+function manualQuackerClicked() {
   quackCounter++;
   // update_status();
   ui_manager.updateQuackCount(quackCounter);
   quackAudio.play();
 }
-
-// hover mouse over button to show description as floating text
-// button.addEventListener("mouseover", () => {
-//   const description = document.createElement("div");
-//   description.innerHTML = "Click the duck!";
-//   app.append(description);
-// });
 
 function frameBasedIncrement(timestamp: number) {
   const deltaSeconds = calculateDeltaSeconds(timestamp);
