@@ -1,4 +1,6 @@
 import "./style.css";
+
+
 // import quackSound from "./quack.mp3";
 
 // GLOBALS.
@@ -8,7 +10,8 @@ const header = document.createElement("h1");
 const divText = document.createElement("div"); // Current quacks.
 const quacksPS = document.createElement("div"); // Quacks per second.
 quacksPS.innerHTML = "Quacks per second: 0";
-// const quackAudio = new Audio(quackSound);
+// const leftcontainer = document.createElement("div");
+const quackAudio = new Audio('./quack.mp3');
 
 interface Item {
   name: string;
@@ -46,7 +49,8 @@ const availableItems: Item[] = [
     count: 0,
     div: document.createElement("div"),
     button: document.createElement("button"),
-    description: "Quacks so loud it can be heard for miles. Can be scheduled to quack at 2AM every day. You monster.",
+    description:
+      "Quacks so loud it can be heard for miles. Can be scheduled to quack at 2AM every day. You monster.",
   },
   {
     name: "MegaMallard",
@@ -55,7 +59,8 @@ const availableItems: Item[] = [
     count: 0,
     div: document.createElement("div"),
     button: document.createElement("button"),
-    description: "A giant duck that quacks so loud it can be heard from space. It's also a mallard, which is a type of duck.",
+    description:
+      "A giant duck that quacks so loud it can be heard from space. It's also a mallard, which is a type of duck.",
   },
   {
     name: "Ducktastrophe",
@@ -64,8 +69,9 @@ const availableItems: Item[] = [
     count: 0,
     div: document.createElement("div"),
     button: document.createElement("button"),
-    description: "A singularity of quacks. The universe will never be the same.",
-  }
+    description:
+      "A singularity of quacks. The universe will never be the same.",
+  },
 ];
 
 const button = document.createElement("button"); // main button. click to quack.
@@ -91,7 +97,8 @@ function buyItem(item: Item) {
     quackCounter -= item.price;
     item.count++;
     item.price *= PRICE_INCREMENT;
-    update_status();
+    // update_status();
+    ui_manager.updateItemStatus();
   }
 }
 
@@ -102,29 +109,56 @@ for (const item of availableItems) {
   item.button.addEventListener("click", () => buyItem(item));
   app.append(item.button);
   const description = document.createElement("div");
-    description.innerHTML = item.description;
-    app.append(description);
+  description.innerHTML = item.description;
+  app.append(description);
   app.append(item.div);
 }
+class UIManager {
+  private divText: HTMLDivElement;
+  private quacksPS: HTMLDivElement;
+  private items: Item[];
 
-function update_status() {
-  // truncate quackCounter to a whole integer
-  const rounded_down_quacks = Math.floor(quackCounter);
-  divText.innerHTML = `Quack! ${rounded_down_quacks} quacks.`;
-  for (const item of availableItems) {
-    item.div.innerHTML = `${item.name}s owned: ${item.count}`;
-    item.button.innerHTML = `Buy ${item.name}: ${item.price} quacks`;
+  constructor(divText: HTMLDivElement, quacksPS: HTMLDivElement, items: Item[]) {
+    this.divText = divText;
+    this.quacksPS = quacksPS;
+    this.items = items;
   }
-  let increment = 0;
-  for (const item of availableItems) {
-    increment += item.count * item.increment;
+
+  updateQuackCount(count: number) {
+    this.divText.innerHTML = `Quack! ${Math.floor(count)} quacks.`;
   }
-  quacksPS.innerHTML = `Quacks per second: ${increment.toFixed(2)}`;
+
+  updateItemStatus() {
+    for (const item of this.items) {
+      item.div.innerHTML = `${item.name}s owned: ${item.count}`;
+      item.button.innerHTML = `Buy ${item.name}: ${item.price} quacks`;
+    }
+  }
+
+  updateQuacksPerSecond(increment: number) {
+    this.quacksPS.innerHTML = `Quacks per second: ${increment.toFixed(2)}`;
+  }
 }
+const ui_manager = new UIManager(divText, quacksPS, availableItems);
+// function update_status() {
+//   // truncate quackCounter to a whole integer
+//   const rounded_down_quacks = Math.floor(quackCounter);
+//   divText.innerHTML = `Quack! ${rounded_down_quacks} quacks.`;
+//   for (const item of availableItems) {
+//     item.div.innerHTML = `${item.name}s owned: ${item.count}`;
+//     item.button.innerHTML = `Buy ${item.name}: ${item.price} quacks`;
+//   }
+//   let increment = 0;
+//   for (const item of availableItems) {
+//     increment += item.count * item.increment;
+//   }
+//   quacksPS.innerHTML = `Quacks per second: ${increment.toFixed(2)}`;
+// }
 function click_quack() {
   quackCounter++;
-  update_status();
-  // quackAudio.play();
+  // update_status();
+  ui_manager.updateQuackCount(quackCounter);
+  quackAudio.play();
 }
 
 // hover mouse over button to show description as floating text
@@ -133,7 +167,6 @@ function click_quack() {
 //   description.innerHTML = "Click the duck!";
 //   app.append(description);
 // });
-
 
 function framebasedIncrement(timestamp: number) {
   const deltaSeconds = (timestamp - (lastTime ?? timestamp)) / 1000;
@@ -148,7 +181,8 @@ function framebasedIncrement(timestamp: number) {
   // lv3Counter * LV3_INCREMENT;
   quackCounter += increment * deltaSeconds;
 
-  update_status();
+  // update_status();
+  ui_manager.updateQuackCount(quackCounter);
   requestAnimationFrame(framebasedIncrement);
 }
 
