@@ -6,6 +6,8 @@ import "./style.css";
 const app: HTMLDivElement = document.querySelector("#app")!;
 const gameName = "Ducky Clicker";
 const header = document.createElement("h1");
+const leftcontainer = document.createElement("div");
+const rightcontainer = document.createElement("div");
 const divText = document.createElement("div"); // Current quacks.
 const quacksPS = document.createElement("div"); // Quacks per second.
 quacksPS.innerHTML = "Quacks per second: 0";
@@ -78,7 +80,6 @@ const PRICE_INCREMENT = 1.15; // price increase factor
 let quackCounter: number = 0; // current quacks owned.
 let lastTime: number;
 
-
 function buyItem(item: Item) {
   if (quackCounter >= item.price) {
     quackCounter -= item.price;
@@ -89,7 +90,6 @@ function buyItem(item: Item) {
     ui_manager.updateQuacksPerSecond();
   }
 }
-
 
 class UIManager {
   private quackCountDivText: HTMLDivElement;
@@ -107,7 +107,7 @@ class UIManager {
   }
 
   updateQuackCount(count: number) {
-    this.quackCountDivText.innerHTML = `Quack! ${Math.floor(count)} quacks.`;
+    this.quackCountDivText.innerHTML = `Quack! ${count.toFixed(2)} quacks.`;
   }
 
   updateItemStatus() {
@@ -156,39 +156,74 @@ function updateQuackCounter(increment: number, deltaSeconds: number) {
   ui_manager.updateQuackCount(quackCounter);
 }
 
-function mainInit(){
-// Initialize UI elements.
-document.title = gameName;
-header.innerHTML = gameName;
-app.append(header);
-divText.innerHTML = "Click the duck!"; // Prompt and quack counter.
-app.append(divText);
-app.append(quacksPS);
+function mainInit() {
+  // Initialize UI elements.
+  document.title = gameName;
+  header.innerHTML = gameName;
 
-/*
+  app.style.display = "flex";
+  app.style.width = "100%";
+  app.style.height = "100%";
+  // app.style.justifyContent = "center";
+  // app.style.alignItems = "center";
+  // app.style.flexDirection = "column";
+  app.style.backgroundColor = "#f0f0f0";
+
+  // make a div container that will align left
+  // init the leftcontainer
+
+  leftcontainer.style.float = "left";
+  leftcontainer.style.width = "50%";
+  app.append(leftcontainer);
+
+  rightcontainer.style.float = "right";
+  rightcontainer.style.width = "50%";
+  app.append(rightcontainer);
+
+  leftcontainer.append(header);
+
+  quacksPS.style.position = "fixed";
+  quacksPS.style.top = "0";
+  quacksPS.style.right = "0";
+  quacksPS.style.padding = "10px";
+  quacksPS.style.backgroundColor = "#333";
+  quacksPS.style.color = "white";
+  quacksPS.style.fontSize = "1.2em";
+  quacksPS.style.zIndex = "1000";
+  app.append(quacksPS);
+
+  /*
 ADDING MAIN QUACK CLICKER BUTTON.
 */
-app.append(document.createElement("br"));
-button.innerHTML = "🦆";
-button.addEventListener("click", manualQuackerClicked);
-app.append(button);
+  leftcontainer.append(document.createElement("br"));
+  button.innerHTML = "🦆";
+  button.addEventListener("click", manualQuackerClicked);
+  // make this button REALLY big
+  button.style.fontSize = "5em";
+  button.style.width = "60%";
+  button.style.height = "60%";
+  leftcontainer.append(button);
 
-/*
+  
+  divText.innerHTML = "Click the duck!"; // Prompt and quack counter.
+  leftcontainer.append(divText);
+
+  /*
 ADDING ITEMS, BUTTONS, EVENT CLICKERS
 */
-for (const item of availableItems) {
-  // const buyButton = document.createElement("button");
-  app.append(document.createElement("br"));
-  item.button.innerHTML = `Buy ${item.name}: ${item.price} quacks`;
-  item.button.addEventListener("click", () => buyItem(item));
-  app.append(item.button);
-  const description = document.createElement("div");
-  description.innerHTML = item.description;
-  app.append(description);
-  app.append(item.div);
-}
+  for (const item of availableItems) {
+    // const buyButton = document.createElement("button");
+    rightcontainer.append(document.createElement("br"));
+    item.button.innerHTML = `Buy ${item.name}: ${item.price} quacks`;
+    item.button.addEventListener("click", () => buyItem(item));
+    rightcontainer.append(item.button);
+    const description = document.createElement("div");
+    description.innerHTML = item.description;
+    rightcontainer.append(description);
+    rightcontainer.append(item.div);
+  }
 
-requestAnimationFrame(updateQuacksByDeltaTime);
+  requestAnimationFrame(updateQuacksByDeltaTime);
 }
 
 mainInit();
