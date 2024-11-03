@@ -78,18 +78,6 @@ const PRICE_INCREMENT = 1.15; // price increase factor
 let quackCounter: number = 0; // current quacks owned.
 let lastTime: number;
 
-// Initialize UI elements.
-document.title = gameName;
-header.innerHTML = gameName;
-app.append(header);
-divText.innerHTML = "Click the duck!"; // Prompt and quack counter.
-app.append(divText);
-app.append(quacksPS);
-
-app.append(document.createElement("br"));
-button.innerHTML = "🦆";
-button.addEventListener("click", manualQuackerClicked);
-app.append(button);
 
 function buyItem(item: Item) {
   if (quackCounter >= item.price) {
@@ -102,17 +90,7 @@ function buyItem(item: Item) {
   }
 }
 
-for (const item of availableItems) {
-  // const buyButton = document.createElement("button");
-  app.append(document.createElement("br"));
-  item.button.innerHTML = `Buy ${item.name}: ${item.price} quacks`;
-  item.button.addEventListener("click", () => buyItem(item));
-  app.append(item.button);
-  const description = document.createElement("div");
-  description.innerHTML = item.description;
-  app.append(description);
-  app.append(item.div);
-}
+
 class UIManager {
   private quackCountDivText: HTMLDivElement;
   private quacksPerSecond: HTMLDivElement;
@@ -152,11 +130,11 @@ function manualQuackerClicked() {
   quackAudio.play();
 }
 
-function frameBasedIncrement(timestamp: number) {
+function updateQuacksByDeltaTime(timestamp: number) {
   const deltaSeconds = calculateDeltaSeconds(timestamp);
   const increment = calculateIncrement();
   updateQuackCounter(increment, deltaSeconds);
-  requestAnimationFrame(frameBasedIncrement);
+  requestAnimationFrame(updateQuacksByDeltaTime);
 }
 
 function calculateDeltaSeconds(timestamp: number): number {
@@ -178,4 +156,39 @@ function updateQuackCounter(increment: number, deltaSeconds: number) {
   ui_manager.updateQuackCount(quackCounter);
 }
 
-requestAnimationFrame(frameBasedIncrement);
+function mainInit(){
+// Initialize UI elements.
+document.title = gameName;
+header.innerHTML = gameName;
+app.append(header);
+divText.innerHTML = "Click the duck!"; // Prompt and quack counter.
+app.append(divText);
+app.append(quacksPS);
+
+/*
+ADDING MAIN QUACK CLICKER BUTTON.
+*/
+app.append(document.createElement("br"));
+button.innerHTML = "🦆";
+button.addEventListener("click", manualQuackerClicked);
+app.append(button);
+
+/*
+ADDING ITEMS, BUTTONS, EVENT CLICKERS
+*/
+for (const item of availableItems) {
+  // const buyButton = document.createElement("button");
+  app.append(document.createElement("br"));
+  item.button.innerHTML = `Buy ${item.name}: ${item.price} quacks`;
+  item.button.addEventListener("click", () => buyItem(item));
+  app.append(item.button);
+  const description = document.createElement("div");
+  description.innerHTML = item.description;
+  app.append(description);
+  app.append(item.div);
+}
+
+requestAnimationFrame(updateQuacksByDeltaTime);
+}
+
+mainInit();
